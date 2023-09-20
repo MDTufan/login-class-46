@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from "firebase/auth";
 import APP from "../Firebase/Firebase.init";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -16,19 +16,20 @@ const hendlesubmit=(event)=>{
     const name=form.name.value;
     const email=form.email.value;
     const password=form.password.value;
+
     if(!/(?=.*[A-Z])/.test(password)){
         setpasswordError("Plase provide At Last One Upparcase")
-    }
+    };
    if(password.length < 8){
         setpasswordError("Plase provide At More than 8 charects")
 
-    }
+    };
     createUserWithEmailAndPassword(auth,email,password)
     .then(result=>{
         const user =result.user;
         console.log(user);
-        verifyEmail()
-       
+        verifyEmail();
+       desplayUserName(name);
          form.reset();
        
     })
@@ -43,6 +44,23 @@ const hendlesubmit=(event)=>{
   }
 }
 
+const desplayUserName=(name)=>{
+  updateProfile(auth.currentUser, {
+    displayName: name
+  }).then(() => {
+    console.log("name update")
+  }).catch((error) => {
+    console.log(error)
+  });
+}
+
+
+
+
+   
+
+
+
   return (
     <div className="container">
      <div className="w-25 mx-auto  xxx" >
@@ -54,7 +72,7 @@ const hendlesubmit=(event)=>{
   </div>
   <div className="mb-3">
     <label  className="form-label">Email address:</label>
-    <input type="email" name="email" className="form-control" placeholder="Enter Your Email" required />
+    <input  type="email" name="email" className="form-control" placeholder="Enter Your Email" required />
     
   </div>
   <div className="mb-3">
@@ -69,6 +87,9 @@ const hendlesubmit=(event)=>{
     
      
 </form>
+    
+
+
      </div>
     </div>
   );
